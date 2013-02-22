@@ -1,3 +1,4 @@
+#!/usr/bin/env gsi
 
 (define (files-in-directory dir)
   (let* ((directory-handle (open-directory dir))
