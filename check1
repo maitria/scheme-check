@@ -1,1 +1,11 @@
 #!/usr/bin/env gsi
+; vim:set ft=scheme sts=2 sw=2 et:
+
+(define check1:*source-file* (cadr (command-line)))
+(display check1:*source-file*)
+(display ": ")
+
+(load check1:*source-file*)
+
+(display " OK")
+(newline)
