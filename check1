@@ -4,8 +4,19 @@
 (define check1:*source-file* (cadr (command-line)))
 (define check1:*ok* #t)
 
+(define (ansi what)
+  (string-append
+    (list->string
+      (list
+        (integer->char 27)
+        #\[))
+    what
+    "m"))
+
+(display (ansi "1"))
 (display check1:*source-file*)
 (display ": ")
+(display (ansi "0"))
 
 (load check1:*source-file*)
 
@@ -109,8 +120,14 @@
   (check1:expectations))
 
 (if check1:*ok*
-  (display " OK")
-  (display " FAILED"))
+  (begin
+    (display (ansi "1"))
+    (display " OK")
+    (display (ansi "0")))
+  (begin
+    (display (ansi "1"))
+    (display " FAILED")
+    (display (ansi "0"))))
 (newline)
 (exit (if check1:*ok*
         0
