@@ -16,10 +16,59 @@
 
   (with-input-from-file check1:*source-file*
     (lambda ()
-      #f
-      ))
+      (let parse-loop ((c (read-char))
+                       (state-stack '(top)))
+        (define (next)
+          (parse-loop (read-char) state-stack))
+        (define (next/push state)
+          (parse-loop (read-char) (cons state state-stack)))
+        (define (next/pop)
+          (parse-loop (read-char) (cdr state-stack)))
+        (define (in-state . states)
+          (memq (car state-stack) states))
 
-  ;(set! expectations (cons '(= 1 1) expectations))
+        (cond
+          ((eof-object? c)
+           #f)
+
+          ;; Lists
+          ((and (in-state 'top)
+                (char=? #\( c))
+           (next/push 'list))
+
+          ((and (in-state 'list)
+                (char=? #\) c))
+           (next/pop))
+
+          ;; String literals
+          ((and (in-state 'top 'list)
+                (char=? #\" c))
+           (next/push 'string))
+          
+          ((and (in-state 'string)
+                (char=? #\\ c))
+           (read-char)
+           (next))
+
+          ((and (in-state 'string)
+                (char=? #\" c))
+           (next/pop))
+
+          ;; Comments
+          ((and (in-state 'top 'list)
+                (char=? #\; c))
+           (next/push 'comment))
+
+          ((and (in-state 'comment)
+                (char=? #\newline c))
+           (next/pop))
+
+          ((in-state 'comment)
+           (display c)
+           (next))
+
+          (else
+           (next))))))
 
   (reverse expectations))
 
