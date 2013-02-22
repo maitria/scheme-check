@@ -2,10 +2,45 @@
 ; vim:set ft=scheme sts=2 sw=2 et:
 
 (define check1:*source-file* (cadr (command-line)))
+(define check1:*ok* #t)
+
 (display check1:*source-file*)
 (display ": ")
 
 (load check1:*source-file*)
 
-(display " OK")
+(define (check1:expectations)
+  (define line-number 1)
+  (define column-number 0)
+  (define expectations '())
+
+  (with-input-from-file check1:*source-file*
+    (lambda ()
+      #f
+      ))
+
+  ;(set! expectations (cons '(= 1 1) expectations))
+
+  (reverse expectations))
+
+(for-each
+  (lambda (expectation)
+    (with-exception-catcher
+      (lambda (e) 
+        (set! check1:*ok* #f)
+        (display "E"))
+      (lambda ()
+        (if (eval expectation)
+          (display ".")
+          (begin
+            (set! check1:*ok* #f)
+            (display "F"))))))
+  (check1:expectations))
+
+(if check1:*ok*
+  (display " OK")
+  (display " FAILED"))
 (newline)
+(exit (if check1:*ok*
+        0
+        1))
