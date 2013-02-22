@@ -13,6 +13,7 @@
   (define line-number 1)
   (define column-number 0)
   (define expectations '())
+  (define this-expectation #f)
 
   (with-input-from-file check1:*source-file*
     (lambda ()
@@ -24,12 +25,18 @@
           (parse-loop (read-char) (cons state state-stack)))
         (define (next/pop)
           (parse-loop (read-char) (cdr state-stack)))
+        (define (next/replace state)
+          (parse-loop (read-char) (cons state (cdr state-stack))))
         (define (in-state . states)
           (memq (car state-stack) states))
+        (define (save)
+          (set! expectations (cons (list->string (reverse this-expectation)) expectations))
+          (set! this-expectation #f))
 
         (cond
           ((eof-object? c)
-           #f)
+           (if (in-state 'expectation)
+             (save)))
 
           ;; Lists
           ((and (in-state 'top)
@@ -54,17 +61,32 @@
                 (char=? #\" c))
            (next/pop))
 
-          ;; Comments
+          ;; Comments / expectations
           ((and (in-state 'top 'list)
                 (char=? #\; c))
-           (next/push 'comment))
+           (next/push 'maybe-expectation))
+
+          ((in-state 'maybe-expectation)
+           (cond
+             ((char=? #\( c)
+              (set! this-expectation '(#\())
+              (next/replace 'expectation))
+             ((char=? #\newline c)
+              (next/pop))
+             (else
+              (next/replace 'comment))))
 
           ((and (in-state 'comment)
                 (char=? #\newline c))
            (next/pop))
 
-          ((in-state 'comment)
-           (display c)
+          ((and (in-state 'expectation)
+                (char=? #\newline c))
+           (save)
+           (next/pop))
+
+          ((in-state 'expectation)
+           (set! this-expectation (cons c this-expectation))
            (next))
 
           (else
@@ -79,7 +101,7 @@
         (set! check1:*ok* #f)
         (display "E"))
       (lambda ()
-        (if (eval expectation)
+        (if (eval (with-input-from-string expectation read))
           (display ".")
           (begin
             (set! check1:*ok* #f)
