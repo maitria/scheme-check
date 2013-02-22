@@ -1,7 +1,7 @@
 #!/usr/bin/env gsi
 
 (define (files-in-directory dir)
-  (let* ((directory-handle (open-directory dir))
+  (let* ((directory-handle (open-directory `(path: ,dir ignore-hidden: dot-and-dot-dot)))
 	 (files (read-all directory-handle)))
     (close-input-port directory-handle)
     (map
@@ -43,5 +43,4 @@
 
 (define (scheme-file? filename)
   (member (file-extension filename) '(".scm" ".ss")))
-
 
