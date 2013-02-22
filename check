@@ -49,17 +49,17 @@
     list)
   (reverse results))
 
-(define (file-extension filename)
-  (define (last-index-of char str)
-    (let loop ((index (- (string-length str) 1)))
-      (cond
-	((< index 0)
-	 #f)
-	((char=? char (string-ref str index))
-	 index)
-	(else
-	 (loop (- index 1))))))
+(define (last-index-of char str)
+  (let loop ((index (- (string-length str) 1)))
+    (cond
+      ((< index 0)
+       #f)
+      ((char=? char (string-ref str index))
+       index)
+      (else
+       (loop (- index 1))))))
 
+(define (file-extension filename)
   (let ((dot-index (last-index-of #\. filename))
 	(slash-index (last-index-of #\/ filename)))
     (cond
@@ -78,8 +78,17 @@
   (filter scheme-file? (files-in-directory ".")))
 
 ;; ---------------------------------------------------------------------------
-;; CHECKING A FILE
+;; CHECKING FILES
 ;; ---------------------------------------------------------------------------
 
+(define (check1-path)
+  (let* ((check-path (this-source-file))
+	 (slash-index (last-index-of #\/ check-path)))
+    (if slash-index
+      (string-append
+        (substring check-path 0 (+ 1 slash-index))
+        "check1")
+      "check1")))
 
-(write (scheme-files))
+(write (check1-path))
+
