@@ -1,13 +1,13 @@
 #!/usr/bin/env gsi
+; vim:set ft=scheme:
 
 (define (files-in-directory dir)
+  (define (add-path file)
+    (string-append dir "/" file))
   (let* ((directory-handle (open-directory `(path: ,dir ignore-hidden: dot-and-dot-dot)))
 	 (files (read-all directory-handle)))
     (close-input-port directory-handle)
-    (map
-      (lambda (file)
-	(string-append dir "/" file))
-    files)))
+    (map add-path files)))
 
 (define (filter predicate list)
   (define results '())
@@ -19,7 +19,6 @@
   (reverse results))
 
 (define (file-extension filename)
-
   (define (last-index-of char str)
     (let loop ((index (- (string-length str) 1)))
       (cond
@@ -44,3 +43,7 @@
 (define (scheme-file? filename)
   (member (file-extension filename) '(".scm" ".ss")))
 
+(define (scheme-files)
+  (filter scheme-file? (files-in-directory ".")))
+
+(write (scheme-files))
