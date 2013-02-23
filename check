@@ -6,20 +6,20 @@
 ;; ---------------------------------------------------------------------------
 
 (define (files-in-directory dir)
-  (define (add-path file)
+  (define (filename->full-path file)
     (string-append dir "/" file))
   (let* ((directory-handle (open-directory `(path: ,dir ignore-hidden: dot-and-dot-dot)))
 	 (files (read-all directory-handle)))
     (close-input-port directory-handle)
-    (map add-path files)))
+    (map filename->full-path files)))
 
-(define (filter predicate list)
+(define (filter predicate the-list)
   (define results '())
   (for-each
     (lambda (element)
       (if (predicate element)
 	(set! results (cons element results))))
-    list)
+    the-list)
   (reverse results))
 
 (define (last-index-of char str)
@@ -75,4 +75,3 @@
     (= 0 exit-status)))
 
 (for-each check1 (scheme-files))
-
