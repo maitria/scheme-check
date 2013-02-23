@@ -6,21 +6,28 @@
 ;; ---------------------------------------------------------------------------
 
 (define (files-in-directory dir)
-  (define (add-path file)
-    (string-append dir "/" file))
+  (define (full-path-for filename)
+    (string-append dir "/" filename))
   (let* ((directory-handle (open-directory `(path: ,dir ignore-hidden: dot-and-dot-dot)))
-	 (files (read-all directory-handle)))
+	 (filenames (read-all directory-handle)))
     (close-input-port directory-handle)
-    (map add-path files)))
+    (map full-path-for filenames)))
 
-(define (filter predicate list)
+;;==============================
+;; Filter for the 21st Century
+;;==============================
+(define (items-satisfying item-should-be-included? the-list)
   (define results '())
   (for-each
     (lambda (element)
-      (if (predicate element)
+      (if (item-should-be-included? element)
 	(set! results (cons element results))))
-    list)
+    the-list)
   (reverse results))
+
+(define filter items-satifsying)
+ 
+;;==============================
 
 (define (last-index-of char str)
   (let loop ((index (- (string-length str) 1)))
@@ -75,4 +82,3 @@
     (= 0 exit-status)))
 
 (for-each check1 (scheme-files))
-
