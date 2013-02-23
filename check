@@ -11,6 +11,7 @@
   (let* ((directory-handle (open-directory `(path: ,dir ignore-hidden: dot-and-dot-dot)))
 	 (filenames (read-all directory-handle)))
     (close-input-port directory-handle)
+
     (map full-path-for filenames)))
 
 ;;==============================
