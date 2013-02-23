@@ -1,9 +1,8 @@
 #!/usr/bin/env gsi
 ; vim:set ft=scheme:
 
-;; ---------------------------------------------------------------------------
-;; FINDING FILES TO CHECK
-;; ---------------------------------------------------------------------------
+(define-macro (alias name-old-people-expect attempt-at-expressive-name)
+  `(define ,name-old-people-expect ,attempt-at-expressive-name)) 
 
 (define (files-in-directory dir)
   (define (full-path-for filename)
@@ -14,9 +13,6 @@
 
     (map full-path-for filenames)))
 
-;;==============================
-;; Filter for the 21st Century
-;;==============================
 (define (items-satisfying item-should-be-included? the-list)
   (define results '())
   (for-each
@@ -26,9 +22,7 @@
     the-list)
   (reverse results))
 
-(define filter items-satifsying)
- 
-;;==============================
+(alias filter items-satisfying)
 
 (define (last-index-of char str)
   (let loop ((index (- (string-length str) 1)))
