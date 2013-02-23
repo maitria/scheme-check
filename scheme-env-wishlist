@@ -1,0 +1,4 @@
+clear specs (rspec dsl)
+zero-config way to run test (rspec testrunner)
+use other libraries (gem / bundler)
+a way to build that knows where shit is (rake)
