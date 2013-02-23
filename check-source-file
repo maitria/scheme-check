@@ -6,13 +6,13 @@
 
 (define first-parameter (cadr (command-line)))
 
-(define (ansi what)
+(define (ansi text-color)
   (string-append
     (list->string
       (list
         (integer->char 27)
         #\[))
-    what
+    text-color
     "m"))
 
 (display (ansi "1"))
