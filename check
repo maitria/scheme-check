@@ -1,8 +1,9 @@
 #!/usr/bin/env gsi
 ; vim:set ft=scheme:
 
-(define-macro (alias name-old-people-expect attempt-at-expressive-name)
-  `(define ,name-old-people-expect ,attempt-at-expressive-name)) 
+(define-macro (deprecate legacy-name #!key replacement) 
+  `(define (,legacy-name . args)
+     (raise ,(string-append "Deprecated. Instead of " (symbol->string legacy-name) " use " (symbol->string replacement)))))
 
 (define (files-in-directory dir)
   (define (full-path-for filename)
@@ -22,7 +23,9 @@
     the-list)
   (reverse results))
 
-(alias filter items-satisfying)
+(deprecate filter replacement: items-satisfying)
+;see deprecate work by uncommenting the following line
+;(write (filter (lambda (x)(< 0 x)) '(1 -2 5 -3)))
 
 (define (last-index-of char str)
   (let loop ((index (- (string-length str) 1)))
@@ -50,7 +53,7 @@
   (member (file-extension filename) '(".scm" ".ss")))
 
 (define (scheme-files)
-  (filter scheme-file? (files-in-directory ".")))
+  (items-satisfying scheme-file? (files-in-directory ".")))
 
 ;; ---------------------------------------------------------------------------
 ;; CHECKING FILES
