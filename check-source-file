@@ -1,8 +1,10 @@
 #!/usr/bin/env gsi
 ; vim:set ft=scheme sts=2 sw=2 et:
 
-(define check1:*source-file* (cadr (command-line)))
-(define check1:*ok* #t)
+(define check-source-file:*source-file* first-parameter) 
+(define check-source-file:*ok* #t)
+
+(define first-parameter (cadr (command-line)))
 
 (define (ansi what)
   (string-append
@@ -14,19 +16,19 @@
     "m"))
 
 (display (ansi "1"))
-(display check1:*source-file*)
+(display check-source-file:*source-file*)
 (display ": ")
 (display (ansi "0"))
 
-(load check1:*source-file*)
+(load check-source-file:*source-file*)
 
-(define (check1:expectations)
+(define (check-source-file:expectations)
   (define line-number 1)
   (define column-number 0)
   (define expectations '())
   (define this-expectation #f)
 
-  (with-input-from-file check1:*source-file*
+  (with-input-from-file check-source-file:*source-file*
     (lambda ()
       (let parse-loop ((c (read-char))
                        (state-stack '(top)))
@@ -109,7 +111,7 @@
   (lambda (expectation)
     (with-exception-catcher
       (lambda (e) 
-        (set! check1:*ok* #f)
+        (set! check-source-file:*ok* #f)
         (display (ansi "31"))
         (display "E")
         (display (ansi "0")))
@@ -120,13 +122,13 @@
             (display ".")
             (display (ansi "0")))
           (begin
-            (set! check1:*ok* #f)
+            (set! check-source-file:*ok* #f)
             (display (ansi "31"))
             (display "F")
             (display (ansi "0")))))))
-  (check1:expectations))
+  (check-source-file:expectations))
 
-(if check1:*ok*
+(if check-source-file:*ok*
   (begin
     (display (ansi "1"))
     (display " OK")
@@ -136,6 +138,6 @@
     (display " FAILED")
     (display (ansi "0"))))
 (newline)
-(exit (if check1:*ok*
+(exit (if check-source-file:*ok*
         0
         1))
