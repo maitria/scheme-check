@@ -1,10 +1,10 @@
 #!/usr/bin/env gsi
 ; vim:set ft=scheme sts=2 sw=2 et:
 
+(define first-parameter (cadr (command-line)))
+
 (define check-source-file:*source-file* first-parameter) 
 (define check-source-file:*ok* #t)
-
-(define first-parameter (cadr (command-line)))
 
 (define (ansi text-color)
   (string-append
@@ -15,10 +15,13 @@
     text-color
     "m"))
 
-(display (ansi "1"))
+(define *bold* (ansi "1"))
+(define *normal* (ansi "0"))
+
+(display *bold*)
 (display check-source-file:*source-file*)
 (display ": ")
-(display (ansi "0"))
+(display *normal*)
 
 (load check-source-file:*source-file*)
 
