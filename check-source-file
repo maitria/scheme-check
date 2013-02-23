@@ -26,8 +26,6 @@
 (load check-source-file:*source-file*)
 
 (define (check-source-file:expectations)
-  (define line-number 1)
-  (define column-number 0)
   (define expectations '())
   (define this-expectation #f)
 
