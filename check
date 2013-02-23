@@ -24,8 +24,8 @@
   (reverse results))
 
 (deprecate filter replacement: items-satisfying)
-;see deprecate work by uncommenting the following line
-;(write (filter (lambda (x)(< 0 x)) '(1 -2 5 -3)))
+;;see deprecate work by uncommenting the following line
+;;(write (filter (lambda (x)(< 0 x)) '(1 -2 5 -3)))
 
 (define (last-index-of char str)
   (let loop ((index (- (string-length str) 1)))
